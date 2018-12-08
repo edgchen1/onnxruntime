@@ -1,15 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include "core/graph/rewrite_rule.h"
 #include "core/graph/identity_elimination.h"
-#include "core/graph/graph_viewer.h"
-#include "core/graph/op.h"
-#include "core/common/logging/logging.h"
 
 namespace onnxruntime {
 
-Status EliminateIdentity::Apply(Graph& graph_editor, Node& node, bool& modified) {
+Status EliminateIdentity::Apply(Graph& graph, Node& node, bool& modified) {
   std::map<const NodeArg*, NodeArg*> replacement_defs;
   auto id_input = node.InputDefs()[0];
   auto id_output = node.OutputDefs()[0];
@@ -23,7 +19,7 @@ Status EliminateIdentity::Apply(Graph& graph_editor, Node& node, bool& modified)
   }
 
   // Remove the Identity node.
-  graph_editor.RemoveNode(node.Index());
+  graph.RemoveNode(node.Index());
 
   // TODO: Make sure resolve is not required here.
   //ONNXRUNTIME_RETURN_IF_ERROR(graph_editor->Resolve());
@@ -31,7 +27,7 @@ Status EliminateIdentity::Apply(Graph& graph_editor, Node& node, bool& modified)
   return Status::OK();
 }
 
-bool EliminateIdentity::SatisfyCondition(const Node& /*node*/) {
+bool EliminateIdentity::SatisfyCondition(const Graph& /*graph*/, const Node& /*node*/) {
   return true;  // No additional condition required.
 }
 

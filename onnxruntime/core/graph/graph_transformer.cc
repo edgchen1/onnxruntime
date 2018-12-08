@@ -8,10 +8,6 @@ using namespace ::onnxruntime::common;
 namespace onnxruntime {
 
 Status RuleBasedGraphTransformer::Register(const std::string& op_type, std::unique_ptr<RewriteRule> rule) {
-  if (HasRules(op_type)) {
-    op_to_rules_[op_type] = std::vector<std::unique_ptr<RewriteRule>>();
-  }
-
   op_to_rules_[op_type].push_back(std::move(rule));
   return Status::OK();
 }
@@ -29,11 +25,18 @@ Status TopDownRuleBasedTransformer::Apply(Graph& graph, bool& modified) const {
 
     // Get the rules that should be fired for this node.
     const std::vector<std::unique_ptr<RewriteRule>>* rules = GetRewriteRules(node->OpType());
-    if (!rules)
-      continue;
+    if (rules) {
+      for (const auto& rule : *rules) {
+        ONNXRUNTIME_RETURN_IF_ERROR(rule->CheckConditionAndApply(graph, *node, modified));
+      }
+    }
 
-    for (const auto& rule : *rules) {
-      ONNXRUNTIME_RETURN_IF_ERROR(rule->CheckConditionAndApply(graph, *node, modified));
+	// Get any default rules.
+    const std::vector<std::unique_ptr<RewriteRule>>* default_rules = GetDefaultRewriteRules();
+    if (default_rules) {
+      for (const auto& rule : *default_rules) {
+        ONNXRUNTIME_RETURN_IF_ERROR(rule->CheckConditionAndApply(graph, *node, modified));
+      }
     }
   }
 

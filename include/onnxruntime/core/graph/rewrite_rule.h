@@ -38,12 +38,12 @@ class RewriteRule {
   }
 
   /** Checks if the condition of the rule is satisfied, and if so applies the rule.
-  @param[in] graph_editor The GraphEditor.
+  @param[in] graph The Graph.
   @param[in] node The Node to apply the rewrite to.
   @param[out] modified Set to indicate whether the node was modified or not.
   @returns Status indicating success or providing error information */
   common::Status CheckConditionAndApply(Graph& graph, Node& node, bool& modified) {
-    return SatisfyCondition(node) ? Apply(graph, node, modified) : Status::OK();
+    return SatisfyCondition(graph, node) ? Apply(graph, node, modified) : Status::OK();
   }
 
  private:
@@ -52,11 +52,11 @@ class RewriteRule {
   const std::string name_;
   const std::string desc_;
 
-  /** Check if the Node satisfies a condition.
+  /** Check if the Node of the given Graph satisfies a condition.
   The rewrite rule is applied if the condition function returns true. This can include
   a more complex pattern matching (conditions on the ascending or descending nodes of the
   node for which this rule was triggered) or some other properties of the nodes. */
-  virtual bool SatisfyCondition(const Node& node) = 0;
+  virtual bool SatisfyCondition(const Graph& graph, const Node& node) = 0;
 
   /**
   Apply the rewrite rule to a specific node.

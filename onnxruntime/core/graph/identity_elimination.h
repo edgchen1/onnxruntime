@@ -13,9 +13,9 @@ class EliminateIdentity : public RewriteRule {
   EliminateIdentity() noexcept : RewriteRule("EliminateIdentity", "Eliminate identity node") {}
 
  private:
-  bool SatisfyCondition(const Node& node) override;
+  bool SatisfyCondition(const Graph& graph, const Node& node) override;
 
-  Status Apply(Graph& graph_editor, Node& node, bool& modified) override;
+  Status Apply(Graph& graph, Node& node, bool& modified) override;
 };
 
 }  // namespace onnxruntime
