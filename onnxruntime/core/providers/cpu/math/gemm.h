@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <sstream>
 #include "core/common/common.h"
 #include "core/framework/op_kernel.h"
 #include "core/util/math.h"
@@ -16,6 +17,21 @@ template <typename T_X,
           typename T_B,
           typename T_Y>
 class Gemm final : public OpKernel {
+ private:
+  static inline std::string ShapeToString(const TensorShape& shape) {
+    std::ostringstream oss;
+    size_t len = shape.NumDimensions();
+    oss << "{";
+    if (len > 0) {
+      oss << shape[0];
+      for (size_t i = 1; i < len; ++i) {
+        oss << ", " << shape[i];
+      }
+    }
+    oss << "}";
+    return oss.str();
+  }
+
  public:
   Gemm(const OpKernelInfo& info) : OpKernel(info) {
     int64_t temp;
@@ -33,6 +49,13 @@ class Gemm final : public OpKernel {
     const auto X = context->Input<Tensor>(0);
     const auto W = context->Input<Tensor>(1);
     const auto B = context->Input<Tensor>(2);
+    if (X->Shape().NumDimensions() != 2) {
+      return ONNXRUNTIME_MAKE_STATUS(ONNXRUNTIME, FAIL, "GEMM's first input has wrong dimension: ", ShapeToString(X->Shape()));
+    }
+    if (W->Shape().NumDimensions() != 2) {
+      return ONNXRUNTIME_MAKE_STATUS(ONNXRUNTIME, FAIL, "GEMM's second input has wrong dimension: ", ShapeToString(W->Shape()));
+    }
+
     GemmHelper helper(X->Shape(), trans_A_ != CblasNoTrans, W->Shape(), trans_B_ != CblasNoTrans, B->Shape());
 
     if (!helper.State().IsOK())
