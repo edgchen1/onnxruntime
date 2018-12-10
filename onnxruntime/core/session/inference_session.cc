@@ -644,7 +644,7 @@ class InferenceSession::Impl {
 
     void* buffer = nullptr;
     if (fetched_tensor.Shape().Size() != 0) {
-      buffer = allocator->Alloc(fetched_tensor.DataType()->Size() * fetched_tensor.Shape().Size());
+      buffer = allocator->AllocArray(fetched_tensor.DataType()->Size(), fetched_tensor.Shape().Size());
       if (!buffer)
         return Status(common::ONNXRUNTIME, common::FAIL, "invalid buffer");
     }

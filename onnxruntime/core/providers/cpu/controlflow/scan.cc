@@ -278,7 +278,7 @@ LoopStateVariable::LoopStateVariable(const MLValue& original_value,
   auto allocate_tensor_in_mlvalue = [&]() {
     auto new_tensor = std::make_unique<Tensor>(tensor.DataType(),
                                                shape,
-                                               allocator->Alloc(shape.Size() * tensor.DataType()->Size()),
+                                               allocator->AllocArray(shape.Size(), tensor.DataType()->Size()),
                                                allocator->Info(),
                                                allocator);
 

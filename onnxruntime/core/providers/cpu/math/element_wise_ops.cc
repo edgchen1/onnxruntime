@@ -844,7 +844,7 @@ struct TBroadcasterExpand {
 template <typename T>
 Status Expand_8<T>::Compute(OpKernelContext* context) const {
   auto& tensor_shape = *context->Input<Tensor>(1);
-  ONNXRUNTIME_ENFORCE(tensor_shape.Shape().GetDims().size() == 1, "Shape must be 1 dimensional as it's tensor data is a shape");
+  ONNXRUNTIME_ENFORCE(tensor_shape.Shape().NumDimensions() == 1, "Shape must be 1 dimensional as it's tensor data is a shape");
 
   // Turn the shape tensor data into an actual shape
   const int64_t* p_shape = tensor_shape.template Data<int64_t>();
