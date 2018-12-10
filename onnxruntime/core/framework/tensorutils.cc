@@ -71,8 +71,8 @@ namespace utils {
       return Status::OK();                                                                                                 \
     }                                                                                                                      \
     if (tensor.field_size() != expected_size)                                                                              \
-      return Status(common::ONNXRUNTIME, common::FAIL,                                                                     \
-                    "UnpackTensor: the pre-allocated size does not match the size in proto");                              \
+      return ONNXRUNTIME_MAKE_STATUS(ONNXRUNTIME, FAIL,                                                                     \
+                    "UnpackTensor: the pre-allocated size does not match the size in proto, expect ", expected_size, ", got " ,#field_size,"=",tensor.field_size());                              \
     auto& data = tensor.field_name();                                                                                      \
     for (auto data_iter = data.cbegin(); data_iter != data.cend(); ++data_iter)                                            \
       *p_data++ = *reinterpret_cast<const T*>(data_iter);                                                                  \
