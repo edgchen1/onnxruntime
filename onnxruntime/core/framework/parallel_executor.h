@@ -44,6 +44,7 @@ class ParallelExecutor : public IExecutor {
                      const logging::Logger& logger);
 
   void FinishNodeRun() {
+    std::unique_lock<std::mutex> lock(complete_mutex_);
     if (--out_standings_ == 0) {
       //std::cout << "all out standing nodes are completed." << std::endl;
       complete_cv_.notify_all();
