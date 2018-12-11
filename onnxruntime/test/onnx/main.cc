@@ -351,7 +351,6 @@ int real_main(int argc, char* argv[]) {
       result = -1;
     }
   }
-
   return result;
 }
 #ifdef _WIN32
@@ -359,10 +358,12 @@ int wmain(int argc, wchar_t* argv[]) {
 #else
 int main(int argc, char* argv[]) {
 #endif
+  int ret = -1;
   try {
-    return real_main(argc, argv);
+    ret = real_main(argc, argv);
   } catch (std::exception& ex) {
     fprintf(stderr, "%s\n", ex.what());
-    return -1;
   }
+  CloseDefaultThreadPool();
+  return ret;
 }
