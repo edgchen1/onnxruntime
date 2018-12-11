@@ -1808,7 +1808,7 @@ Status Graph::Resolve(bool no_proto_sync_required) {
   // type/shape validation and inferencing on this and any subgraphs
   // recurses into subgraphs via the ONNX checker, which descends into the GraphProto in node attributes
   // which define a subgraph.
-  //KONSTANTINOS TO UNCOMMENT: ONNXRUNTIME_RETURN_IF_ERROR(PerformTypeAndShapeInferencing());
+  ONNXRUNTIME_RETURN_IF_ERROR(PerformTypeAndShapeInferencing());
 
   // perform the final steps for this graph and all subgraphs
   auto finalize_func = [&no_proto_sync_required](Graph& graph) {
