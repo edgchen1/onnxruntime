@@ -40,6 +40,10 @@ jobs:
           source: ./
           destination: ./_site
 
+      - name: DEBUG dump _site tree
+        run: |
+          find ./_site
+
       - name: Download C apidocs artifact
         uses: dawidd6/action-download-artifact@v2
         with:
